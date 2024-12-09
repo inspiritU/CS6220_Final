@@ -1,7 +1,20 @@
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import axios from 'axios';
 
 function App() {
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/about" element={<About />} />
+                <Route path="*" element={<NotFound />} />
+            </Routes>
+        </Router>
+    );
+}
+
+function Home() {
     const [targetStations, setTargetStations] = useState(50);
     const [eps, setEps] = useState(0.05);
     const [minSamples, setMinSamples] = useState(8);
@@ -24,7 +37,7 @@ function App() {
                 kmeansCsvLink: `${process.env.REACT_APP_API_URL}/files/${response.data.kmeans_csv_path}`,
                 comparisonImage: `${process.env.REACT_APP_API_URL}/files/${response.data.comparison_image}`,
             };
-            setResults([newResult, ...results]); // 新结果放在数组首位
+            setResults([newResult, ...results]);
             setErrorMessage('');
         })
         .catch(error => {
@@ -39,7 +52,7 @@ function App() {
             <p style={{ textAlign: 'center', fontSize: '14px', color: '#333' }}>
                 Optimize bus station locations using DBSCAN and KMeans clustering algorithms.
             </p>
-
+            {/* Optimization form */}
             <div style={{ margin: '20px auto', maxWidth: '600px', backgroundColor: '#fff', padding: '20px', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
                 <label style={{ display: 'block', marginBottom: '15px', fontWeight: 'bold' }}>
                     Target Stations: <span style={{ color: 'orange' }}>{targetStations}</span>
@@ -53,7 +66,6 @@ function App() {
                         style={{ width: '100%', marginTop: '10px' }}
                     />
                 </label>
-
                 <label style={{ display: 'block', marginBottom: '15px', fontWeight: 'bold' }}>
                     Eps (DBSCAN Radius): <span style={{ color: 'orange' }}>{eps.toFixed(2)}</span>
                     <input
@@ -66,7 +78,6 @@ function App() {
                         style={{ width: '100%', marginTop: '10px' }}
                     />
                 </label>
-
                 <label style={{ display: 'block', marginBottom: '15px', fontWeight: 'bold' }}>
                     Min Samples: <span style={{ color: 'orange' }}>{minSamples}</span>
                     <input
@@ -79,7 +90,6 @@ function App() {
                         style={{ width: '100%', marginTop: '10px' }}
                     />
                 </label>
-
                 <button
                     onClick={handleOptimize}
                     style={{
@@ -97,10 +107,9 @@ function App() {
                 >
                     Optimize
                 </button>
-
                 {errorMessage && <p style={{ color: 'red', marginTop: '15px', fontWeight: 'bold' }}>{errorMessage}</p>}
             </div>
-
+            {/* Results */}
             {results.map((result, index) => (
                 <div key={index} style={{ marginTop: '20px', textAlign: 'center' }}>
                     <h3 style={{ color: 'orange' }}>Optimization Result {index + 1}</h3>
@@ -127,6 +136,24 @@ function App() {
                     />
                 </div>
             ))}
+        </div>
+    );
+}
+
+function About() {
+    return (
+        <div style={{ padding: '20px', textAlign: 'center' }}>
+            <h1>About Bus Optimization</h1>
+            <p>This application helps optimize bus station locations using clustering algorithms.</p>
+        </div>
+    );
+}
+
+function NotFound() {
+    return (
+        <div style={{ padding: '20px', textAlign: 'center' }}>
+            <h1>Page Not Found</h1>
+            <p>The page you're looking for doesn't exist.</p>
         </div>
     );
 }
